@@ -1,0 +1,833 @@
+<?php
+$reviewsFile = 'data/reviews.json';
+$reviews = [];
+if (file_exists($reviewsFile)) {
+   $json = file_get_contents($reviewsFile);
+   $reviews = json_decode($json, true) ?? [];
+}
+?>
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+   <title>Мириам Горовацкая | Авторские экскурсии на авто по Санкт-Петербургу</title>
+   <meta name="description" content="Авторские экскурсии по Санкт-Петербургу на личном автомобиле с профессиональным гидом Мириам Горовацкой. Оставьте отзыв!">
+   <meta name="keywords" content="экскурсии на авто Санкт-Петербург, гид на машине, Мириам Горовацкая, отзывы с капчей">
+   <link rel="canonical" href="https://gorovatskaya-tours.ru">
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@300;400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+   <style>
+      /* ----- БАЗОВЫЕ СБРОСЫ ----- */
+      * {
+         margin: 0;
+         padding: 0;
+         box-sizing: border-box;
+      }
+
+      body {
+         font-family: 'Inter', sans-serif;
+         background-color: #FEFCF5;
+         color: #1E2A36;
+         line-height: 1.5;
+         scroll-behavior: smooth;
+      }
+
+      h1,
+      h2,
+      h3,
+      .logo {
+         font-family: 'Playfair Display', serif;
+      }
+
+      .container {
+         max-width: 1280px;
+         margin: 0 auto;
+         padding: 0 24px;
+      }
+
+      /* ----- АДАПТИВНЫЙ ХЕДЕР ----- */
+      header {
+         background: rgba(255, 252, 240, 0.96);
+         backdrop-filter: blur(8px);
+         position: sticky;
+         top: 0;
+         z-index: 100;
+         border-bottom: 1px solid rgba(212, 175, 120, 0.3);
+      }
+
+      .navbar {
+         display: flex;
+         justify-content: space-between;
+         align-items: center;
+         padding: 1rem 0;
+         flex-wrap: wrap;
+      }
+
+      .logo {
+         font-size: 1.8rem;
+         font-weight: 700;
+         color: #A67B45;
+      }
+
+      .logo span {
+         font-size: 0.9rem;
+         font-family: 'Inter';
+         color: #2C3E50;
+      }
+
+      .nav-links {
+         display: flex;
+         gap: 2rem;
+         list-style: none;
+      }
+
+      .nav-links a {
+         text-decoration: none;
+         font-weight: 500;
+         color: #2C3E50;
+         transition: 0.2s;
+      }
+
+      .nav-links a:hover {
+         color: #A67B45;
+      }
+
+      .mobile-menu {
+         display: none;
+         font-size: 1.8rem;
+         cursor: pointer;
+         color: #2C3E50;
+      }
+
+      /* ----- КНОПКИ ----- */
+      .btn {
+         display: inline-block;
+         background: #A67B45;
+         color: white;
+         padding: 12px 28px;
+         border-radius: 40px;
+         text-decoration: none;
+         font-weight: 600;
+         transition: 0.2s;
+         border: none;
+         cursor: pointer;
+         font-size: 1rem;
+      }
+
+      .btn:hover {
+         background: #8b6239;
+         transform: translateY(-2px);
+      }
+
+      /* ----- HERO ----- */
+      .hero {
+         background: linear-gradient(107deg, #F0E9DF, #FFF8ED);
+         padding: 60px 0 70px;
+      }
+
+      .hero-grid {
+         display: flex;
+         align-items: center;
+         gap: 48px;
+         flex-wrap: wrap;
+      }
+
+      .hero-content {
+         flex: 1;
+      }
+
+      .hero-content h1 {
+         font-size: clamp(2rem, 5vw, 3.2rem);
+         line-height: 1.2;
+      }
+
+      .hero-accent {
+         color: #A67B45;
+      }
+
+      .hero-desc {
+         font-size: 1.1rem;
+         margin: 20px 0 30px;
+      }
+
+      .hero-stats {
+         display: flex;
+         gap: 24px;
+         flex-wrap: wrap;
+         margin-top: 32px;
+      }
+
+      .hero-stats i {
+         font-size: 2rem;
+         color: #A67B45;
+         margin-right: 8px;
+      }
+
+      .hero-image {
+         flex: 1;
+         text-align: center;
+      }
+
+      .hero-image img {
+         max-width: 100%;
+         border-radius: 40px;
+         box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.15);
+      }
+
+      /* ----- СЕКЦИИ ----- */
+      section {
+         padding: 70px 0;
+      }
+
+      .section-title {
+         font-size: clamp(1.8rem, 4vw, 2.5rem);
+         text-align: center;
+         margin-bottom: 48px;
+         position: relative;
+      }
+
+      .section-title:after {
+         content: '';
+         width: 70px;
+         height: 3px;
+         background: #A67B45;
+         display: block;
+         margin: 16px auto 0;
+      }
+
+      .about-grid {
+         display: flex;
+         gap: 40px;
+         flex-wrap: wrap;
+         align-items: center;
+      }
+
+      .about-text {
+         flex: 1;
+      }
+
+      .about-img {
+         flex: 1;
+         text-align: center;
+      }
+
+      .about-img img {
+         width: 100%;
+         max-width: 350px;
+         border-radius: 32px;
+         box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+      }
+
+      .signature {
+         font-family: 'Playfair Display';
+         font-style: italic;
+         margin-top: 20px;
+         color: #A67B45;
+      }
+
+      /* ----- ТУРЫ (адаптивная сетка) ----- */
+      .tours-grid {
+         display: grid;
+         grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+         gap: 30px;
+      }
+
+      .tour-card {
+         background: white;
+         border-radius: 32px;
+         overflow: hidden;
+         box-shadow: 0 8px 18px rgba(0, 0, 0, 0.05);
+         transition: 0.25s;
+      }
+
+      .tour-card:hover {
+         transform: translateY(-6px);
+      }
+
+      .tour-img {
+         height: 200px;
+         background-size: cover;
+         background-position: center;
+      }
+
+      .tour-content {
+         padding: 20px;
+      }
+
+      .tour-content h3 {
+         font-size: 1.6rem;
+         margin-bottom: 10px;
+      }
+
+      .tour-details {
+         display: flex;
+         gap: 16px;
+         margin: 12px 0;
+         color: #6C7A89;
+         flex-wrap: wrap;
+      }
+
+      .price {
+         font-size: 1.4rem;
+         font-weight: 700;
+         color: #A67B45;
+         margin: 12px 0;
+      }
+
+      /* ----- ПРЕИМУЩЕСТВА ----- */
+      .features-grid {
+         display: grid;
+         grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+         gap: 30px;
+         text-align: center;
+      }
+
+      .feature {
+         background: white;
+         padding: 32px 16px;
+         border-radius: 32px;
+      }
+
+      .feature i {
+         font-size: 2.5rem;
+         color: #A67B45;
+         margin-bottom: 16px;
+      }
+
+      /* ----- БЛОК ОТЗЫВОВ (АДАПТИВНЫЙ) ----- */
+      .reviews-container {
+         display: flex;
+         flex-direction: column;
+         gap: 40px;
+      }
+
+      .reviews-list {
+         display: grid;
+         grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+         gap: 25px;
+      }
+
+      .review-card {
+         background: white;
+         border-radius: 28px;
+         padding: 24px;
+         box-shadow: 0 6px 12px rgba(0, 0, 0, 0.04);
+      }
+
+      .review-name {
+         font-weight: 700;
+         font-size: 1.2rem;
+         color: #A67B45;
+         margin-bottom: 10px;
+      }
+
+      .review-text {
+         font-style: italic;
+         margin: 12px 0;
+         line-height: 1.4;
+      }
+
+      .review-date {
+         font-size: 0.75rem;
+         color: #999;
+      }
+
+      /* ФОРМА ДОБАВЛЕНИЯ ОТЗЫВА (полностью адаптивная) */
+      .add-review-form {
+         background: #fff;
+         border-radius: 40px;
+         padding: 32px 24px;
+         box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+         max-width: 700px;
+         margin: 0 auto;
+         width: 100%;
+      }
+
+      .add-review-form h3 {
+         font-size: 1.6rem;
+         margin-bottom: 20px;
+         text-align: center;
+      }
+
+      .form-group {
+         margin-bottom: 20px;
+      }
+
+      .form-group input,
+      .form-group textarea {
+         width: 100%;
+         padding: 14px 18px;
+         border: 1px solid #E2DFD5;
+         border-radius: 40px;
+         font-family: 'Inter';
+         background: #FEFCF5;
+         font-size: 1rem;
+      }
+
+      .form-group textarea {
+         border-radius: 28px;
+         resize: vertical;
+         min-height: 100px;
+      }
+
+      /* Капча — гибкая на мобильных */
+      .captcha-group {
+         display: flex;
+         flex-wrap: wrap;
+         align-items: center;
+         gap: 12px;
+      }
+
+      .captcha-question {
+         background: #f0e9df;
+         padding: 12px 20px;
+         border-radius: 40px;
+         font-weight: 600;
+         font-size: 1.1rem;
+      }
+
+      .captcha-group input[name="captcha_answer"] {
+         width: 120px;
+         flex-shrink: 0;
+      }
+
+      .review-status {
+         margin-top: 16px;
+         text-align: center;
+         font-weight: 500;
+      }
+
+      /* КОНТАКТЫ + ФОРМА БРОНИРОВАНИЯ */
+      .contact-wrapper {
+         display: flex;
+         gap: 40px;
+         flex-wrap: wrap;
+         background: #FFFFFFE6;
+         border-radius: 48px;
+         padding: 32px 28px;
+         box-shadow: 0 20px 30px -12px rgba(0, 0, 0, 0.1);
+      }
+
+      .contact-info,
+      .contact-form {
+         flex: 1;
+         min-width: 240px;
+      }
+
+      .contact-detail {
+         display: flex;
+         align-items: center;
+         gap: 16px;
+         margin: 24px 0;
+         flex-wrap: wrap;
+      }
+
+      .contact-detail i {
+         font-size: 1.5rem;
+         color: #A67B45;
+         width: 32px;
+      }
+
+      /* ФУТЕР */
+      footer {
+         background: #1E2A36;
+         color: #ddd;
+         padding: 40px 0;
+         text-align: center;
+      }
+
+      .footer-links {
+         display: flex;
+         justify-content: center;
+         gap: 30px;
+         flex-wrap: wrap;
+         margin-bottom: 20px;
+      }
+
+      .footer-links a {
+         color: #CBB282;
+         text-decoration: none;
+      }
+
+      /* WHATSAPP FLOAT */
+      .whatsapp-float {
+         position: fixed;
+         bottom: 20px;
+         right: 20px;
+         background: #25D366;
+         color: white;
+         width: 55px;
+         height: 55px;
+         border-radius: 50%;
+         display: flex;
+         align-items: center;
+         justify-content: center;
+         font-size: 30px;
+         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+         z-index: 99;
+         transition: 0.2s;
+      }
+
+      /* ----- АДАПТИВНОСТЬ ДЛЯ ПЛАНШЕТОВ И ТЕЛЕФОНОВ ----- */
+      @media (max-width: 800px) {
+         .container {
+            padding: 0 20px;
+         }
+
+         .nav-links {
+            display: none;
+            flex-direction: column;
+            width: 100%;
+            background: #FFF8ED;
+            padding: 20px;
+            border-radius: 30px;
+            margin-top: 12px;
+            gap: 1rem;
+         }
+
+         .nav-links.active {
+            display: flex;
+         }
+
+         .mobile-menu {
+            display: block;
+         }
+
+         .hero-stats {
+            justify-content: space-between;
+         }
+
+         .hero-stats .stat-item {
+            font-size: 0.9rem;
+            text-align: center;
+         }
+
+         .hero-stats i {
+            display: block;
+            margin-bottom: 6px;
+         }
+
+         .contact-wrapper {
+            padding: 24px 20px;
+         }
+
+         .captcha-group {
+            flex-direction: column;
+            align-items: stretch;
+         }
+
+         .captcha-group input[name="captcha_answer"] {
+            width: 100%;
+         }
+
+         .add-review-form {
+            padding: 24px 16px;
+         }
+
+         .btn {
+            padding: 10px 20px;
+            font-size: 0.95rem;
+         }
+      }
+
+      @media (max-width: 520px) {
+         .reviews-list {
+            grid-template-columns: 1fr;
+         }
+
+         .features-grid {
+            grid-template-columns: 1fr;
+         }
+
+         .tour-content h3 {
+            font-size: 1.4rem;
+         }
+      }
+   </style>
+</head>
+
+<body>
+   <header>
+      <div class="container">
+         <div class="navbar">
+            <div class="logo">Мириам Горовацкая <span>| гид на авто</span></div>
+            <div class="mobile-menu" id="mobileMenuBtn"><i class="fas fa-bars"></i></div>
+            <ul class="nav-links" id="navLinks">
+               <li><a href="#home">Главная</a></li>
+               <li><a href="#about">Об авторе</a></li>
+               <li><a href="#tours">Экскурсии</a></li>
+               <li><a href="#advantages">Преимущества</a></li>
+               <li><a href="#reviewsBlock">Отзывы</a></li>
+               <li><a href="#contact">Контакты</a></li>
+            </ul>
+         </div>
+      </div>
+   </header>
+   <main>
+      <!-- HERO -->
+      <section id="home" class="hero">
+         <div class="container hero-grid">
+            <div class="hero-content">
+               <h1>Авторские экскурсии <span class="hero-accent">на личном авто</span> по Санкт-Петербургу</h1>
+               <p class="hero-desc">Индивидуальные маршруты, полная свобода и глубокое погружение в историю города с профессиональным гидом.</p>
+               <a href="#contact" class="btn">Забронировать →</a>
+               <div class="hero-stats">
+                  <div class="stat-item"><i class="fas fa-clock"></i> Гибкий график</div>
+                  <div class="stat-item"><i class="fas fa-car"></i> Комфорт авто</div>
+                  <div class="stat-item"><i class="fas fa-map-marked-alt"></i> Уникальные маршруты</div>
+               </div>
+            </div>
+            <div class="hero-image"><img src="./img/logo.jpg" alt="Петербург" loading="lazy"></div>
+         </div>
+      </section>
+
+      <!-- ABOUT -->
+      <section id="about">
+         <div class="container">
+            <h2 class="section-title">О Мириам Горовацкой</h2>
+            <div class="about-grid">
+               <div class="about-text">
+                  <p>Здравствуйте! Я Мириам — лицензированный гид, влюблённый в Петербург. Более 10 лет провожу <strong>авторские экскурсии на своём автомобиле</strong>, открывая гостям тайные дворики, легенды и лучшие виды.</p>
+                  <p>Каждый маршрут создаётся под ваш темп и интересы: история, архитектура, мистика или загородные поездки. По образованию искусствовед, расскажу так, что вы полюбите город навсегда.</p>
+                  <div class="signature">— Мириам Горовацкая, ваш персональный гид</div>
+               </div>
+               <div class="about-img"><img src="./img/logo.jpg" alt="Мириам Горовацкая"></div>
+            </div>
+         </div>
+      </section>
+
+      <!-- TOURS -->
+      <section id="tours" style="background: #F8F4EC;">
+         <div class="container">
+            <h2 class="section-title">Авторские маршруты</h2>
+            <div class="tours-grid">
+               <div class="tour-card">
+                  <div class="tour-img" style="background-image: url('./img/921987463624.webp');"></div>
+                  <div class="tour-content">
+                     <h3>«Имперский Петербург»</h3>
+                     <p>Дворцовая набережная, Эрмитаж, Петропавловка.</p>
+                     <div class="tour-details"><i class="far fa-clock"></i> 4 часа <i class="fas fa-car"></i> на авто</div>
+                     <div class="price">от 6500 ₽ / группа до 4 чел</div>
+                  </div>
+               </div>
+               <div class="tour-card">
+                  <div class="tour-img" style="background-image: url('./img/921987463624.webp');"></div>
+                  <div class="tour-content">
+                     <h3>«Достоевский и Мистика»</h3>
+                     <p>Дворы-колодцы, доходные дома, легенды.</p>
+                     <div class="tour-details"><i class="far fa-clock"></i> 3.5 часа</div>
+                     <div class="price">5900 ₽ / группа до 3 чел</div>
+                  </div>
+               </div>
+               <div class="tour-card">
+                  <div class="tour-img" style="background-image: url('./img/921987463624.webp');"></div>
+                  <div class="tour-content">
+                     <h3>«Петергоф & Кронштадт»</h3>
+                     <p>Фонтаны, парк, морская крепость.</p>
+                     <div class="tour-details"><i class="far fa-clock"></i> 6 часов</div>
+                     <div class="price">от 8900 ₽</div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </section>
+
+      <!-- ADVANTAGES -->
+      <section id="advantages">
+         <div class="container">
+            <h2 class="section-title">Почему выбирают меня</h2>
+            <div class="features-grid">
+               <div class="feature"><i class="fas fa-user-friends"></i>
+                  <h3>Индивидуально</h3>
+                  <p>Маршрут под вас</p>
+               </div>
+               <div class="feature"><i class="fas fa-car-side"></i>
+                  <h3>Комфорт авто</h3>
+                  <p>Кондиционер, вода</p>
+               </div>
+               <div class="feature"><i class="fas fa-camera-retro"></i>
+                  <h3>Лучшие фото</h3>
+                  <p>Секретные ракурсы</p>
+               </div>
+               <div class="feature"><i class="fas fa-history"></i>
+                  <h3>Глубокие знания</h3>
+                  <p>Авторские факты</p>
+               </div>
+            </div>
+         </div>
+      </section>
+
+      <!-- REVIEWS (АДАПТИВНАЯ ФОРМА + КАПЧА) -->
+      <section id="reviewsBlock" style="background: #FEFCF5;">
+         <div class="container">
+            <h2 class="section-title">Отзывы гостей</h2>
+            <div class="reviews-container">
+               <div class="reviews-list" id="reviewsList"></div>
+               <div class="add-review-form">
+                  <h3>Оставьте свой отзыв</h3>
+                  <form id="reviewForm">
+                     <div class="form-group"><input type="text" name="review_name" placeholder="Ваше имя *" required></div>
+                     <div class="form-group"><textarea name="review_message" placeholder="Расскажите о впечатлениях *" required></textarea></div>
+                     <div class="form-group captcha-group">
+                        <span class="captcha-question" id="captchaQuestion">Загрузка...</span>
+                        <input type="text" name="captcha_answer" placeholder="Ответ цифрой" required>
+                        <input type="hidden" name="captcha_id" id="captchaId" value="">
+                     </div>
+                     <button type="submit" class="btn">Отправить отзыв</button>
+                     <div id="reviewStatus" class="review-status"></div>
+                  </form>
+               </div>
+            </div>
+         </div>
+      </section>
+
+      <!-- CONTACT + BOOKING FORM -->
+      <section id="contact">
+         <div class="container">
+            <h2 class="section-title">Свяжитесь со мной</h2>
+            <div class="contact-wrapper">
+               <div class="contact-info">
+                  <h3>Запланируйте путешествие</h3>
+                  <p>Оставьте заявку, и я помогу подобрать идеальный маршрут.</p>
+                  <div class="contact-detail"><i class="fas fa-phone-alt"></i> <span><strong>Телефон / WhatsApp:</strong> <a href="tel:+79817266565" style="color:#1E2A36;">+7 (981) 726-65-65</a></span></div>
+                  <div class="contact-detail"><i class="fas fa-envelope"></i> <span><strong>Email:</strong> gorovatskaya.m@gmail.com</span></div>
+                  <div class="contact-detail"><i class="fab fa-telegram"></i> <span><strong>Telegram:</strong> @miriam_guide</span></div>
+               </div>
+               <div class="contact-form">
+                  <form id="bookingForm" method="POST" action="send.php">
+                     <div class="form-group"><input type="text" name="name" placeholder="Ваше имя" required></div>
+                     <div class="form-group"><input type="tel" name="phone" placeholder="Номер телефона *" required></div>
+                     <div class="form-group"><input type="email" name="email" placeholder="Email (для ответа)"></div>
+                     <div class="form-group"><input type="text" name="excursion_date" placeholder="Желаемая дата"></div>
+                     <div class="form-group"><textarea name="message" rows="3" placeholder="Ваши пожелания..."></textarea></div>
+                     <button type="submit" class="btn">Отправить заявку</button>
+                     <div id="bookingStatus" class="form-status"></div>
+                  </form>
+               </div>
+            </div>
+         </div>
+      </section>
+   </main>
+
+   <footer>
+      <div class="container">
+         <div class="footer-links">
+            <a href="#home">Главная</a><a href="#about">Об авторе</a><a href="#tours">Экскурсии</a><a href="#contact">Контакты</a>
+         </div>
+         <p>© 2025 Мириам Горовацкая — авторские экскурсии на авто по Санкт-Петербургу.</p>
+         <p style="margin-top:8px;">Лицензия гида № 12345 | Санкт-Петербург</p>
+      </div>
+   </footer>
+
+   <a href="https://wa.me/79817266565" class="whatsapp-float" target="_blank"><i class="fab fa-whatsapp"></i></a>
+
+   <script>
+      // Мобильное меню
+      const mobileBtn = document.getElementById('mobileMenuBtn');
+      const navLinks = document.getElementById('navLinks');
+      mobileBtn.addEventListener('click', () => navLinks.classList.toggle('active'));
+      document.querySelectorAll('.nav-links a').forEach(link => link.addEventListener('click', () => navLinks.classList.remove('active')));
+
+      // Загрузка отзывов
+      const reviewsList = document.getElementById('reviewsList');
+      const reviewForm = document.getElementById('reviewForm');
+      const reviewStatus = document.getElementById('reviewStatus');
+
+      function loadReviews() {
+         fetch('review_fetch.php')
+            .then(r => r.json())
+            .then(data => {
+               if (data.success && data.reviews.length) {
+                  reviewsList.innerHTML = data.reviews.map(rev => `
+                        <div class="review-card">
+                            <div class="review-name">${escapeHtml(rev.name)}</div>
+                            <div class="review-text">“${escapeHtml(rev.message)}”</div>
+                            <div class="review-date">${rev.date}</div>
+                        </div>
+                    `).join('');
+               } else {
+                  reviewsList.innerHTML = '<p style="text-align:center;">Пока отзывов нет. Будьте первыми!</p>';
+               }
+            });
+      }
+
+      function loadCaptcha() {
+         fetch('review_add.php?action=get_captcha')
+            .then(r => r.json())
+            .then(data => {
+               if (data.question) {
+                  document.getElementById('captchaQuestion').innerText = data.question;
+                  document.getElementById('captchaId').value = data.id;
+               }
+            });
+      }
+
+      function escapeHtml(str) {
+         if (!str) return '';
+         return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+         }).replace(/[\n\r]/g, '<br>');
+      }
+
+      reviewForm.addEventListener('submit', (e) => {
+         e.preventDefault();
+         const fd = new FormData(reviewForm);
+         reviewStatus.innerHTML = 'Отправка...';
+         fetch('review_add.php', {
+               method: 'POST',
+               body: fd
+            })
+            .then(r => r.json())
+            .then(data => {
+               if (data.success) {
+                  reviewStatus.innerHTML = '✅ Спасибо! Отзыв добавлен.';
+                  reviewForm.reset();
+                  loadReviews();
+                  loadCaptcha();
+                  setTimeout(() => reviewStatus.innerHTML = '', 4000);
+               } else {
+                  reviewStatus.innerHTML = '❌ ' + (data.error || 'Ошибка. Попробуйте ещё.');
+                  loadCaptcha();
+               }
+            })
+            .catch(() => {
+               reviewStatus.innerHTML = '❌ Ошибка соединения.';
+               loadCaptcha();
+            });
+      });
+
+      // Форма бронирования
+      const bookingForm = document.getElementById('bookingForm');
+      const bookingStatus = document.getElementById('bookingStatus');
+      bookingForm.addEventListener('submit', async (e) => {
+         e.preventDefault();
+         bookingStatus.innerHTML = 'Отправка...';
+         const fd = new FormData(bookingForm);
+         try {
+            const resp = await fetch('send.php', {
+               method: 'POST',
+               body: fd
+            });
+            const result = await resp.json();
+            if (result.success) {
+               bookingStatus.innerHTML = '✅ Заявка отправлена! Я свяжусь с вами.';
+               bookingForm.reset();
+            } else {
+               bookingStatus.innerHTML = '❌ Ошибка. Попробуйте позже.';
+            }
+         } catch (e) {
+            bookingStatus.innerHTML = '⚠️ Ошибка. Напишите на почту.';
+         }
+      });
+
+      loadReviews();
+      loadCaptcha();
+   </script>
+</body>
+
+</html>
