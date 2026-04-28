@@ -156,15 +156,38 @@
          margin-right: 8px;
       }
 
-      .hero-image {
-         flex: 1;
-         text-align: center;
+      /* Базовые стили (десктоп) */
+      .hero-grid {
+         display: flex;
+         align-items: center;
+         gap: 48px;
+         flex-wrap: wrap;
       }
 
-      .hero-image img {
-         max-width: 100%;
-         border-radius: 40px;
-         box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.15);
+      .hero-content {
+         flex: 1;
+      }
+
+      .hero-image {
+         flex: 1;
+      }
+
+      /* Мобильные (ширина до 500px) */
+      @media (max-width: 500px) {
+         .hero-grid {
+            flex-direction: column;
+            gap: 24px;
+         }
+
+         .hero-content {
+            order: 1;
+         }
+
+         .hero-image {
+            order: 2;
+            width: 100%;
+            margin-top: 0;
+         }
       }
 
       section {
@@ -568,9 +591,7 @@
                   <div class="stat-item"><i class="fas fa-map-marked-alt"></i> Уникальные маршруты</div>
                </div>
             </div>
-            <div class="hero-image"><img
-                  src="./img/cropped-image.jpg"
-                  alt="Петербург" loading="lazy"></div>
+            <div class="hero-image"><img src="./img/cropped-image.jpg" alt="Мириам" loading="lazy" style="width: 100%"></div>
          </div>
       </section>
 
@@ -581,14 +602,13 @@
                <div class="about-text">
                   <p>Здравствуйте! Я Мириам — лицензированный гид, влюблённый в Петербург. Более 10 лет провожу
                      <strong>авторские экскурсии на своём автомобиле</strong>, открывая гостям тайные дворики, легенды и
-                     лучшие виды.</p>
+                     лучшие виды.
+                  </p>
                   <p>Каждый маршрут создаётся под ваш темп и интересы: история, архитектура, мистика или загородные
                      поездки. По образованию искусствовед, расскажу так, что вы полюбите город навсегда.</p>
                   <div class="signature">— Мириам Горовацкая, ваш персональный гид</div>
                </div>
-               <div class="about-img"><img
-                     src="./img/logo.jpg"
-                     alt="Мириам Горовацкая"></div>
+               <div class="about-img"><img src="./img/logo.jpg" alt="Мириам Горовацкая"></div>
             </div>
          </div>
       </section>
